@@ -30,7 +30,7 @@ class AuthController extends Controller
         ]);
 
         if (!$user) {
-            return $this->jsonResponse(HttpConstants::HTTP_INTERNAL_SERVER_ERROR, 'User registration failed, Try Again!');
+            return $this->jsonResponse(HttpConstants::HTTP_SERVER_ERROR, 'User registration failed, Try Again!');
         }
 
         return $this->jsonResponse(HttpConstants::HTTP_CREATED, 'User registered successfully', $user);
