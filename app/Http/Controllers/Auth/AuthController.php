@@ -62,7 +62,6 @@ class AuthController extends Controller
             [
                 'user' => $user,
                 'token' => $token,
-                'token_type' => 'Bearer'
             ]
         );
 
