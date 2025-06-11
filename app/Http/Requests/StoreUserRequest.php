@@ -34,16 +34,4 @@ class StoreUserRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator)
-    {
-        $errors = $validator->errors()->toArray();
-
-        throw new HttpResponseException(
-            $this->jsonResponse(
-                HttpConstants::HTTP_VALIDATION_ERROR,
-                'Validation failed',
-                ['errors' => $errors]
-            )
-        );
-    }
 }

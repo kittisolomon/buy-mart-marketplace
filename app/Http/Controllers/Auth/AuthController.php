@@ -6,19 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 use App\Models\User;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\LoginUserRequest;
 use App\Support\HttpConstants;
 use App\Traits\HasJsonResponse;
+use Illuminate\Http\JsonResponse;
+
 
 class AuthController extends Controller
 {
     //
     use HasJsonResponse;
-    public function register(StoreUserRequest $request)
+    public function register(StoreUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
 
@@ -29,15 +29,11 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        if (!$user) {
-            return $this->jsonResponse(HttpConstants::HTTP_SERVER_ERROR, 'User registration failed, Try Again!');
-        }
-
         return $this->jsonResponse(HttpConstants::HTTP_CREATED, 'User registered successfully', $user);
     }
 
 
-    public function login(LoginUserRequest $request)
+    public function login(LoginUserRequest $request): JsonResponse    
     {
         $userCredentials = $request->only('email', 'password');
 
@@ -68,7 +64,7 @@ class AuthController extends Controller
        
     }
    
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse    
     {
         $user = Auth::user();
 
