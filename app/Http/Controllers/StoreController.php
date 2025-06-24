@@ -8,23 +8,23 @@ use App\Http\Requests\StoreRequest;
 use App\Models\Store;
 use App\Support\HttpConstants;
 use App\Traits\HasJsonResponse;
+use App\Http\Resources\StoreResource;
 
 
 
 class StoreController extends Controller
 {
-    //
     use HasJsonResponse;
     public function index(): JsonResponse
     {
         $user_id = auth()->id();
 
-        $stores = Store::with(['category', 'owner'])
+        $stores = Store::with(['storeCategory', 'owner'])
             ->where('user_id', $user_id)
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(10);
 
-        return $this->jsonResponse(HttpConstants::HTTP_SUCCESS, 'Stores retrieved successfully', $stores);
+        return $this->wrapJsonResponse(StoreResource::collection($stores)->response(),'Stores retrieved successfully');
     }
 
     public function store(StoreRequest $request): JsonResponse

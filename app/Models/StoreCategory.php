@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class StoreCategory extends Model
 {
-    //
     use HasFactory, HasUuids;
 
     public $incrementing = false;

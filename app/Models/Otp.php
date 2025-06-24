@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 
 class Otp extends Model
 {
-    //
     use HasFactory, HasUuids;
 
     public $incrementing = false;
