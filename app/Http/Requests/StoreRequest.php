@@ -3,13 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Traits\HasJsonResponse;
-use App\Support\HttpConstants;
-class LoginUserRequest extends FormRequest
+
+class StoreRequest extends FormRequest
 {
-    use HasJsonResponse;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -25,10 +21,10 @@ class LoginUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'email' => ['required', 'email'],
-            'password' => ['required', 'string'],
+         return [
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'store_category_id' => 'required|exists:store_categories,id',
         ];
     }
-
 }

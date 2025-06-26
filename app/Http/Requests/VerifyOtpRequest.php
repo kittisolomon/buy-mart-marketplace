@@ -3,14 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Traits\HasJsonResponse;
-use App\Support\HttpConstants;
 
-class StoreUserRequest extends FormRequest
+class VerifyOtpRequest extends FormRequest
 {
-     use HasJsonResponse;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -27,11 +22,9 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'unique:users,email'],
-            'phone' => ['required', 'string', 'unique:users,phone'],
-            'password' => ['required', 'string', 'min:6'],
+             'email' => 'required|email|exists:users,email',
+             'otp'   => 'required|digits:6',
+             'type'  => 'required|string|in:account_verification,password_update',
         ];
     }
-
 }
