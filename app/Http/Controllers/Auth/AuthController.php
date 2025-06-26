@@ -24,13 +24,9 @@ class AuthController extends Controller
 {
     //
     use HasJsonResponse;
-    protected $authService;
 
-    public function __construct(AuthService $authService)
-    {
-        $this->authService = $authService;
+   public function __construct(public AuthService $authService) {}
 
-    }
    public function register(StoreUserRequest $request): JsonResponse
     {
         $validated = $request->validated();
