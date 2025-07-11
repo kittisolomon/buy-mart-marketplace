@@ -60,7 +60,7 @@ return [
             'report' => false,
         ],
 
-           'cloudinary' => [
+        'cloudinary' => [
             'driver' => 'cloudinary',
             'key'    => env('CLOUDINARY_API_KEY'),
             'secret' => env('CLOUDINARY_API_SECRET'),

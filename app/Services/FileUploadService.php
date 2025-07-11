@@ -8,7 +8,7 @@ class FileUploadService
 {
     public function productImageUpload(UploadedFile $productImage, string $folder = 'products'): array
     {
-        
+
         $path = Storage::disk('cloudinary')->putFile($folder, $productImage);
         $url = Storage::disk('cloudinary')->url($path);
 
@@ -29,4 +29,5 @@ class FileUploadService
     {
         Storage::disk('cloudinary')->delete($product_image_id);
     }
+
 }

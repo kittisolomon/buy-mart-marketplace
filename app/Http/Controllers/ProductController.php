@@ -12,13 +12,10 @@ use App\Support\HttpConstants;
 use App\Traits\HasJsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FileUploadService;
-use Illuminate\Support\Facades\Log;
- use Illuminate\Support\Arr;
 
 class ProductController extends Controller
 {
     use HasJsonResponse;
-
     public function __construct(public FileUploadService $fileUploadService){}
 
     /**
