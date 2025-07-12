@@ -8,7 +8,7 @@ use App\Mail\SendOtpMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 
-class authService
+class AuthService
 {
     /**
      * Verify an account verification OTP.
