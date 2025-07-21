@@ -14,39 +14,6 @@ class CartService
         return Cart::firstOrCreate(['user_id' => $userId]);
     }
 
-    // {
-    //     return DB::transaction(function () use ($cart, $product, $quantity) {
-    //         $existingItem = $cart->items()->where('product_id', $product->id)->first();
-
-    //         if ($existingItem) {
-    //             $diff = $quantity - $existingItem->quantity;
-    //             if ($diff > 0) {
-    //                 $stockCheck = $this->checkStock($product, $existingItem, $diff);
-    //                 if (!$stockCheck['status']) {
-    //                     return $stockCheck;
-    //                 }
-    //                 $product->decrement('quantity', $diff);
-    //             } elseif ($diff < 0) {
-    //                 $product->increment('quantity', abs($diff));
-    //             }
-    //             $existingItem->update(['quantity' => $quantity]);
-    //             $cartItem = $existingItem->refresh();
-    //         } else {
-    //             $stockCheck = $this->checkStock($product, $existingItem, $quantity);
-    //             if (!$stockCheck['status']) {
-    //                 return $stockCheck;
-    //             }
-    //             $cartItem = $cart->items()->create([
-    //                 'product_id' => $product->id,
-    //                 'quantity' => $quantity,
-    //             ]);
-    //             $product->decrement('quantity', $quantity);
-    //         }
-
-    //         return ['status' => true, 'item' => $cartItem->load('product')];
-    //     });
-    // }
-
     public function addToCart(Cart $cart, Product $product, int $newQuantity = 1)
     {
         return DB::transaction(function () use ($cart, $product, $newQuantity) {
