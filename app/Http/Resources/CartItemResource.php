@@ -14,13 +14,14 @@ class CartItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $price = $this->whenLoaded('product', fn() => $this->product->price, 0);
+        $product = $this->whenLoaded('product');
+        $price = $product ? $product->price : 0;
         $quantity = $this->quantity;
 
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
-            'product_name' => $this->whenLoaded('product', fn() => $this->product->name),
+            'product_name' => $product ?  $product->name : '',
             'price' => $price,
             'quantity' => $quantity,
             'subtotal' => $price * $quantity,

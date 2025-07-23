@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class CartService
 {
+
     public function getOrCreateCart($userId): Cart
     {
         return Cart::firstOrCreate(['user_id' => $userId]);
@@ -17,18 +18,15 @@ class CartService
     public function addToCart(Cart $cart, Product $product, int $newQuantity = 1)
     {
         return DB::transaction(function () use ($cart, $product, $newQuantity) {
-        
+
             $existingItem = $cart->items()->firstWhere('product_id', $product->id);
 
             if ($existingItem) {
 
-                $stockCheck = $this->checkStock($product, $existingItem, $newQuantity);
-
+                $stockCheck = $this->ensureStockAndDecrement($product, $newQuantity, $existingItem);
                 if (!$stockCheck['status']) {
                     return $stockCheck;
                 }
-
-                $product->decrement('quantity', $newQuantity);
 
                 $existingItem->increment('quantity', $newQuantity);
 
@@ -58,16 +56,10 @@ class CartService
         return DB::transaction(function () use ($item, $quantityToAdd) {
             $product = $item->product;
 
-            $newTotalQuantity = $item->quantity + $quantityToAdd;
-
-            if ($newTotalQuantity > $product->quantity) {
-                return [
-                    'status' => false,
-                    'message' => 'Not enough stock available for this product.'
-                ];
+            $stockCheck = $this->ensureStockAndDecrement($product, $quantityToAdd, $item);
+            if (!$stockCheck['status']) {
+                return $stockCheck;
             }
-
-            $product->decrement('quantity', $quantityToAdd);
 
             $item->increment('quantity', $quantityToAdd);
 
@@ -119,6 +111,16 @@ class CartService
                 'message' => 'Not enough stock available for this product.'
             ];
         }
+        return ['status' => true];
+    }
+
+    private function ensureStockAndDecrement(Product $product, int $qty, $existingItem = null): array
+    {
+        $stockCheck = $this->checkStock($product, $existingItem, $qty);
+        if (!$stockCheck['status']) {
+            return $stockCheck;
+        }
+        $product->decrement('quantity', $qty);
         return ['status' => true];
     }
 }

@@ -17,12 +17,7 @@ class CartResource extends JsonResource
     {
         $items = $this->relationLoaded('items') ? $this->items : collect();
         $totalQuantity = $items->sum('quantity');
-        $totalPrice = $items
-            ->map(function ($item) {
-                $price = $item->relationLoaded('product') ? $item->product->price : 0;
-                return $price * $item->quantity;
-            })
-            ->sum();
+        $totalPrice = $items->sum(function ($item) { return ($item->product->price ?? 0) * $item->quantity; });
 
         return [
             'id' => $this->id,
