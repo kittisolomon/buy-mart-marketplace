@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services;
 
@@ -8,18 +8,35 @@ use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Transaction;
 use App\Services\CartService;
+use InvalidArgumentException;
+use Illuminate\Support\Facades\Log;
+use App\Support\HttpConstants;
 
 class PaymentService
 {
     public function __construct(
         private CartService $cartService
-    ) {}
+    ) {
+    }
 
-    public function initializePayment(Order $order)
+    public function initializePayment(Order $order): array
     {
+        if (!$order->user || !$order->total) {
+            throw new InvalidArgumentException('Invalid order data');
+        }
+
         $flutterwaveKey = config('services.flutterwave.secret_key');
 
-        $response = Http::withToken($flutterwaveKey)->post('https://api.flutterwave.com/v3/payments', [
+        if (empty($flutterwaveKey)) {
+
+            Log::error('Flutterwave secret key is missing in configuration.');
+
+            throw new InvalidArgumentException('Flutterwave initialization failed.');
+        }
+
+        $baseUrl = config('services.flutterwave.base_url');
+
+        $response = Http::withToken($flutterwaveKey)->post($baseUrl . '/payments', [
             'tx_ref' => $order->id,
             'amount' => $order->total,
             'currency' => 'NGN',
@@ -31,15 +48,20 @@ class PaymentService
         ]);
 
         if ($response->failed()) {
-            throw new \Exception('Flutterwave init failed: ' . $response->body());
+
+            Log::error('Flutterwave initialization failed: ' . $response->body());
+
+            throw new \Exception('Flutterwave initialization failed: ' . $response->body());
         }
 
         return $response->json();
     }
 
-    public function verifyAndLogPayment($transactionId)
+    public function verifyAndLogPayment($transactionId): Payment
     {
-        $verifyUrl = "https://api.flutterwave.com/v3/transactions/{$transactionId}/verify";
+        $baseUrl = config('services.flutterwave.base_url');
+
+        $verifyUrl = $baseUrl . "/transactions/{$transactionId}/verify";
 
         $response = Http::withToken(config('services.flutterwave.secret_key'))->get($verifyUrl);
 
@@ -69,15 +91,15 @@ class PaymentService
             Transaction::create([
                 'payment_id' => $payment->id,
                 'type' => 'payment',
-                'status' => $data['status'] === 'successful' ? 'completed' : 'failed',
+                'status' => $data['status'] === HttpConstants::PAYMENT_SUCCESSFUL ? HttpConstants::ORDER_COMPLETED : HttpConstants::ORDER_FAILED,
                 'amount' => $data['amount'],
                 'currency_code' => $data['currency'],
                 'reference_id' => $data['id'],
                 'is_reconciled' => false,
             ]);
 
-            $order->update(['status' => 'completed']);
-            
+            $order->update(['status' => HttpConstants::ORDER_COMPLETED]);
+
             $cart = $this->cartService->getOrCreateCart($order->user_id);
             $this->cartService->clearCart($cart);
 

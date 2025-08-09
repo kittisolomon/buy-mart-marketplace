@@ -20,4 +20,11 @@ class HttpConstants
 
     public const HTTP_SERVER_ERROR = 500;
     public const HTTP_SERVICE_UNAVAILABLE = 503;
+
+    public const PAYMENT_SUCCESSFUL = 'successful';
+    public const PAYMENT_FAILED     = 'failed';
+    public const PAYMENT_PENDING    = 'pending';
+    public const ORDER_COMPLETED = 'completed';
+    public const ORDER_FAILED    = 'failed';
+    public const ORDER_PENDING   = 'pending';
 }

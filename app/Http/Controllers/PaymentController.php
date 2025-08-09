@@ -24,17 +24,10 @@ class PaymentController extends Controller
 
             $data = $this->paymentService->initializePayment($order);
             
-            return $this->jsonResponse(
-                HttpConstants::HTTP_SUCCESS,
-                'Payment initialized successfully',
-                ['link' => $data['data']['link']]
-            );
+            return $this->jsonResponse(HttpConstants::HTTP_SUCCESS, 'Payment initialized successfully', ['link' => $data['data']['link']]);
+            
         } catch (\Exception $e) {
-            return $this->jsonResponse(
-                HttpConstants::HTTP_BAD_REQUEST,
-                'Failed to initialize payment',
-                ['error' => $e->getMessage()]
-            );
+            return $this->jsonResponse(HttpConstants::HTTP_BAD_REQUEST, 'Failed to initialize payment',['error' => $e->getMessage()]);
         }
     }
 
@@ -43,17 +36,10 @@ class PaymentController extends Controller
         try {
             $payment = $this->paymentService->verifyAndLogPayment($request->query('transaction_id'));
             
-            return $this->jsonResponse(
-                HttpConstants::HTTP_SUCCESS,
-                'Payment verified successfully',
-                new PaymentResource($payment)
-            );
+            return $this->jsonResponse(HttpConstants::HTTP_SUCCESS, 'Payment verified successfully', new PaymentResource($payment));
+            
         } catch (\Exception $e) {
-            return $this->jsonResponse(
-                HttpConstants::HTTP_BAD_REQUEST,
-                'Payment verification failed',
-                ['error' => $e->getMessage()]
-            );
+            return $this->jsonResponse( HttpConstants::HTTP_BAD_REQUEST,'Payment verification failed',['error' => $e->getMessage()]);
         }
     }
 }
