@@ -6,6 +6,8 @@ use \App\Http\Controllers\Auth\AuthController;
 use \App\Http\Controllers\StoreController;
 use \App\Http\Controllers\ProductController;
 use \App\Http\Controllers\CartController;
+use \App\Http\Controllers\OrderController;
+use \App\Http\Controllers\PaymentController;
 
 
 // public routes 
@@ -42,6 +44,19 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/item/{cartItem}', [CartController::class, 'update'])->name('update');
         Route::delete('/item/{cartItem}', [CartController::class, 'destroy'])->name('destroy');
         Route::delete('/clear', [CartController::class, 'clear'])->name('clear');
+    });
+
+    // Order routes
+    Route::prefix('order')->name('order.')->group(function () {
+        Route::post('/store', [OrderController::class, 'storeOrder'])->name('store');
+        Route::get('/all', [OrderController::class, 'showOrders'])->name('all');
+        Route::get('/{order}', [OrderController::class, 'showOrders'])->name('show');
+    });
+
+    // Payment routes
+    Route::prefix('payment')->name('payment.')->group(function () {
+        Route::post('/initialize/{order}', [PaymentController::class, 'initialize'])->name('initialize');
+        Route::get('/callback', [PaymentController::class, 'callback'])->name('callback');
     });
     
 });
